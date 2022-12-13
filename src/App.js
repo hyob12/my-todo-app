@@ -8,6 +8,7 @@ import TodoInsert from './components/TodoInsert';
 let nextId = 4;
 
 function App() {
+  const [selectedTodo, setSelectedTodo] = useState(null);
   const [insertToggle, setInsertToggle] = useState(false);
   const [todos, setTodos] = useState([
     {
@@ -28,6 +29,9 @@ function App() {
   ]);
 
   const onInsertToggle = () => {
+    if (selectedTodo) {
+      setSelectedTodo(null);
+    }
     setInsertToggle(!insertToggle);
   };
 
@@ -44,13 +48,33 @@ function App() {
     }
   };
 
+  const onCheckToggle = (id) => {
+    setTodos((todos) => todos.map((todo) => (todo.id === id ? { ...todo, checked: !todo.checked } : todo)));
+  };
+
+  const onChangeSelectedTodo = (todo) => {
+    setSelectedTodo(todo);
+  };
+
+  const onRemove = (id) => {
+    onInsertToggle();
+    setTodos((todos) => todos.filter((todo) => todo.id !== id));
+  };
+
+  const onUpdate = (id, text) => {
+    onInsertToggle();
+    setTodos((todos) => todos.map((todo) => (todo.id === id ? { ...todo, text } : todo)));
+  };
+
   return (
     <Template todoLength={todos.length}>
-      <TodoList todos={todos} />
+      <TodoList todos={todos} onCheckToggle={onCheckToggle} onInsertToggle={onInsertToggle} onChangeSelectedTodo={onChangeSelectedTodo} />
       <div className="add-todo-button" onClick={onInsertToggle}>
         <MdAddCircle />
       </div>
-      {insertToggle && <TodoInsert onInsertToggle={onInsertToggle} onInsertTodo={onInsertTodo} />}
+      {insertToggle && (
+        <TodoInsert onInsertToggle={onInsertToggle} onInsertTodo={onInsertTodo} selectedTodo={selectedTodo} onRemove={onRemove} onUpdate={onUpdate} />
+      )}
     </Template>
   );
 }
