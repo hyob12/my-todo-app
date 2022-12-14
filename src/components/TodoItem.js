@@ -10,13 +10,13 @@ function TodoItem({ todo, onCheckToggle, onInsertToggle, onChangeSelectedTodo })
         {checked ? (
           <MdCheckBox
             onClick={() => {
-              onCheckToggle(id);
+              onCheckToggle(id, checked);
             }}
           />
         ) : (
           <MdCheckBoxOutlineBlank
             onClick={() => {
-              onCheckToggle(id);
+              onCheckToggle(id, checked);
             }}
           />
         )}

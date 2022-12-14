@@ -1,32 +1,27 @@
 import './App.css';
 import Template from './components/Template';
 import TodoList from './components/TodoList';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MdAddCircle } from 'react-icons/md';
 import TodoInsert from './components/TodoInsert';
-
-let nextId = 4;
 
 function App() {
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [insertToggle, setInsertToggle] = useState(false);
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      text: '할 일 1',
-      checked: true,
-    },
-    {
-      id: 2,
-      text: '할 일 2',
-      checked: false,
-    },
-    {
-      id: 3,
-      text: '할 일 3',
-      checked: true,
-    },
-  ]);
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/todolist')
+      .then((res) => {
+        if (!res.ok) {
+          throw Error('could not fetch the data for that resource');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setTodos(data);
+      });
+  }, [todos]);
 
   const onInsertToggle = () => {
     if (selectedTodo) {
@@ -39,17 +34,27 @@ function App() {
     if (text === '') return alert('할 일을 입력해주세요');
     else {
       const todo = {
-        id: nextId,
         text,
         checked: false,
       };
-      setTodos([...todos, todo]);
-      nextId++;
+      fetch('http://localhost:3001/todolist', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(todo),
+      });
     }
   };
 
-  const onCheckToggle = (id) => {
-    setTodos((todos) => todos.map((todo) => (todo.id === id ? { ...todo, checked: !todo.checked } : todo)));
+  const onCheckToggle = (id, checked) => {
+    fetch(`http://localhost:3001/todolist/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ checked: !checked }),
+    });
   };
 
   const onChangeSelectedTodo = (todo) => {
@@ -58,12 +63,20 @@ function App() {
 
   const onRemove = (id) => {
     onInsertToggle();
-    setTodos((todos) => todos.filter((todo) => todo.id !== id));
+    fetch(`http://localhost:3001/todolist/${id}`, {
+      method: 'DELETE',
+    });
   };
 
   const onUpdate = (id, text) => {
     onInsertToggle();
-    setTodos((todos) => todos.map((todo) => (todo.id === id ? { ...todo, text } : todo)));
+    fetch(`http://localhost:3001/todolist/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ text: text }),
+    });
   };
 
   return (
