@@ -2,13 +2,18 @@
   "todolist": [
     {
       "id": 1,
-      "text": "공부",
-      "checked": false
+      "text": "공부하기",
+      "checked": true
     },
     {
       "text": "블로깅",
       "checked": true,
       "id": 3
+    },
+    {
+      "text": "운동",
+      "checked": true,
+      "id": 4
     }
   ]
 }

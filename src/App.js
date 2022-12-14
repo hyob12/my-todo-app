@@ -21,7 +21,7 @@ function App() {
       .then((data) => {
         setTodos(data);
       });
-  }, [todos]);
+  }, []);
 
   const onInsertToggle = () => {
     if (selectedTodo) {
@@ -43,7 +43,7 @@ function App() {
           'content-type': 'application/json',
         },
         body: JSON.stringify(todo),
-      });
+      }).then(setTodos([...todos, todo]));
     }
   };
 
@@ -53,8 +53,8 @@ function App() {
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ checked: !checked }),
-    });
+      body: JSON.stringify({ checked: checked }),
+    }).then(setTodos((todos) => todos.map((todo) => (todo.id === id ? { ...todo, checked: !todo.checked } : todo))));
   };
 
   const onChangeSelectedTodo = (todo) => {
@@ -65,7 +65,7 @@ function App() {
     onInsertToggle();
     fetch(`http://localhost:3001/todolist/${id}`, {
       method: 'DELETE',
-    });
+    }).then(setTodos((todos) => todos.filter((todo) => todo.id !== id)));
   };
 
   const onUpdate = (id, text) => {
@@ -77,6 +77,7 @@ function App() {
       },
       body: JSON.stringify({ text: text }),
     });
+    setTodos((todos) => todos.map((todo) => (todo.id === id ? { ...todo, text } : todo)));
   };
 
   return (
