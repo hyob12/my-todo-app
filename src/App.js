@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { MdAddCircle } from 'react-icons/md';
 import TodoInsert from './components/TodoInsert';
 
+// 커밋용 수정222
 function App() {
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [insertToggle, setInsertToggle] = useState(false);
